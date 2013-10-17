@@ -1,0 +1,82 @@
+body > div {
+	float: left;
+	width: 500px;
+	height: 500px;
+	margin: 10px;
+	background: #eee;
+}
+
+body > div:nth-child(2) {
+	overflow-y: scroll;
+}
+
+
+div.scrollbar {
+	position: relative;
+	overflow: hidden;
+}
+
+div.scrollbar > div {
+	overflow-y: scroll;
+	width: inherit;
+	height: inherit;
+	margin-right: -40px;
+	padding-right: 40px;
+}
+
+span.scrollbar {
+	opacity: .4;
+	background: rgba(0, 0, 0, 0);
+
+	-webkit-transition: background 150ms linear;
+	-moz-transition:    background 150ms linear;
+	-o-transition:      background 150ms linear;
+	-ms-transition:     background 150ms linear;
+	transition:         background 150ms linear;
+}
+
+span.scrollbar.active,
+span.scrollbar:hover {
+	opacity: .8;
+	background: rgba(0, 0, 0, .2);
+}
+
+span.scrollbar > span {
+	float: right;
+	width: 25px;
+	cursor: pointer;
+}
+
+span.scrollbar > span span {
+	display: block;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	bottom: 5px;
+	left: 15px;
+	background: #555;
+
+	-webkit-border-radius: 5px;
+    -khtml-border-radius:  5px;
+    -moz-border-radius:    5px;
+    border-radius:         5px;
+
+	-webkit-transition: left 150ms linear;
+	-moz-transition:    left 150ms linear;
+	-o-transition:      left 150ms linear;
+	-ms-transition:     left 150ms linear;
+	transition:         left 150ms linear;
+}
+
+span.scrollbar.active > span span,
+span.scrollbar:hover > span span {
+	left: 5px;
+}
+
+span.scrollbar > span:hover span {
+	background: #333;
+}
+
+span.scrollbar.active > span span {
+	background: #111;
+}
