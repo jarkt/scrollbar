@@ -1,6 +1,7 @@
 var Scrollbar = new Class({
 
 	container: null,
+	containerInner: null,
 	barContainer: null,
 	bar: null,
 	maxBarOffset: 0,
@@ -14,8 +15,21 @@ var Scrollbar = new Class({
 		this._createBar();
 		this.update();
 
+		var fxScroll = new Fx.Scroll(this.containerInner, {
+			"duration": 300,
+			"transition": "quad:out",
+			"link": "cancel"
+		});
+		var scroll;
+		var deleteScroll = function() {
+			scroll = null;
+		};
+		fxScroll.addEvent('complete', deleteScroll);
+		fxScroll.addEvent('cancel', deleteScroll);
+
 		// Drag bar:
 		this.bar.addEvent('mousedown', function(e) {
+			fxScroll.cancel();
 			this.barContainer.addClass('active');
 
 			var startOffset = e.client.y - parseInt(this.bar.getStyle('top'));
@@ -38,10 +52,11 @@ var Scrollbar = new Class({
 		}.bind(this));
 
 		// Page by page:
-		var fxScroll;
 		this.barContainer.addEvent('click', function(e) {
 			if(!this.bar.contains(e.target)) {
-				var scroll = this.containerInner.getScroll();
+				fxScroll.stop();
+				scroll = scroll || this.containerInner.getScroll();
+
 				if(e.client.y <= this.bar.getPosition().y) {
 					// Scroll up:
 					scroll.y -= this.container.getHeight();
@@ -52,20 +67,20 @@ var Scrollbar = new Class({
 					scroll.y = scroll.y > this.maxScrollOffset ? this.maxScrollOffset : scroll.y;
 				}
 
-				fxScroll = fxScroll || new Fx.Scroll(this.containerInner, {
-					"duration": 250,
-					"transition": "quad:out"
-				});
 				fxScroll.start(scroll.x, scroll.y);
 			}
 		}.bind(this));
 
 		// Move bar:
-		var mousewheel = function(e) {
+		this.containerInner.addEvent('scroll', function(e) {
 			var offset = (this.containerInner.getScroll().y / this.maxScrollOffset) * this.maxBarOffset;
 			this.bar.setStyle('top', offset);
-		}.bind(this);
-		this.containerInner.addEvent('scroll', mousewheel);
+		}.bind(this));
+
+		// Prevents scrolling of outer container:
+		this.barContainer.addEvent('mousewheel', function(e) {
+			e.preventDefault();
+		}.bind(this));
 	},
 
 	_createBar: function() {
@@ -77,7 +92,6 @@ var Scrollbar = new Class({
 			"right": 0,
 			"bottom": 0,
 			"display": "block",
-			"width": 25,
 			"height": coord.height
 		});
 
@@ -97,6 +111,7 @@ var Scrollbar = new Class({
 		this.maxScrollOffset = scrollHeight - visibleHeight;
 		var barHeight = visibleHeight * (visibleHeight / scrollHeight);
 		this.bar.setStyle('height', barHeight);
+		barHeight = this.bar.getHeight(); // Update value, because of min-height
 		this.maxBarOffset = visibleHeight - barHeight;
 
 		if(barHeight === visibleHeight) {
