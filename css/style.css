@@ -44,6 +44,7 @@ span.scrollbar:hover {
 span.scrollbar > span {
 	float: right;
 	width: 25px;
+	min-height: 50px;
 	cursor: pointer;
 }
 
