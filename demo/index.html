@@ -51,6 +51,11 @@
 		<div class="native-scrollbars">
 			<div class="red-big-monster"></div>
 		</div>
+		<div data-scrolling="scrolling">
+			<div data-scrolling-area>
+				<div class="red-big-monster"></div>
+			</div>
+		</div>
 		<script src="../lib/mootools-core.js"></script>
 		<script src="../lib/mootools-more.js"></script>
 		<script src="../Source/scrolling.js"></script>
@@ -81,6 +86,8 @@
 				document.getElements('.scrolling').each(function(container) {
 					new Scrolling(container);
 				});
+
+				new ScrollingNew(document.querySelector('[data-scrolling]'));
 			});
 		</script>
 	</body>

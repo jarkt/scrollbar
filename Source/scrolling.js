@@ -16,6 +16,118 @@ provides: [Scrolling]
 
 ...
 */
+
+
+/**
+ * Scrolling class adds custom scrollbars to a native scrolling element.
+ *
+ * Example HTML:
+ * <div data-scrolling="scrolling">
+ *     <div data-scrolling-area>
+ *         scrollable content goes here
+ *     </div>
+ * </div>
+ *
+ * Example JS initialization:
+ * for (const scrolling of document.querySelectorAll('[data-scrolling]')) {
+ *     new Scrolling(scrolling);
+ * }
+ *
+ * Example CSS:
+ * .scrolling {
+ *     position: relative;
+ *     overflow: hidden;
+ * }
+ * .scrolling-area {
+ *     overflow: auto;
+ *     width: inherit;
+ *     height: inherit;
+ * }
+ *
+ * @param {HTMLElement} container
+ * @param {Object} options
+ */
+function ScrollingNew(container, options) {
+	options = Object.assign({
+		// interactive: true,
+		// label: '<strong>{currentPage}</strong>{pages}',
+		classes: {
+			base: container.dataset.scrolling,
+			get area() {
+				return this.base + '-area';
+			},
+			get active() {
+				return this.base + '-active';
+			}
+		},
+		// scrollDuration: 260,
+		// scrollTransition: 'quad:out',
+		hideDelay: 500
+	}, options);
+
+	const scrollingArea = container.querySelector('[data-scrolling-area]');
+	const nativeBarSize = {x: 0, y: 0};
+
+	let currentScrollPosition;
+	let ticking = false;
+	let scrollStopTimeout;
+
+	// setup once
+	container.classList.add(options.classes.base);
+	container.addEventListener('update', update);
+	scrollingArea.classList.add(options.classes.area);
+	scrollingArea.addEventListener('scroll', scroll);
+
+	update();
+
+
+	// hover -> use css
+
+
+	/**
+	 * Update scrolling context (initial or on content or element size change)
+	 */
+	function update() {
+		hideNativeScrollbars();
+		/* TODO: on change update:
+			- scroll size (bar size)
+			- scroll direction (x, y, x+y)
+		*/
+	}
+
+	function hideNativeScrollbars() {
+		nativeBarSize.x = scrollingArea.offsetHeight - scrollingArea.clientHeight;
+		nativeBarSize.y = scrollingArea.offsetWidth - scrollingArea.clientWidth;
+		Object.assign(scrollingArea.style, {
+			margin: '0 -' + nativeBarSize.y + 'px -' + nativeBarSize.x + 'px 0',
+			padding: '0 ' + nativeBarSize.y + 'px ' + nativeBarSize.x + 'px 0'
+		});
+	}
+
+	function createScrollbars() {}
+
+	/**
+	 * Update scroll position
+	 */
+	function scroll() {
+		currentScrollPosition = {
+			x: scrollingArea.scrollLeft,
+			y: scrollingArea.scrollTop
+		};
+		if (!ticking) {
+			requestAnimationFrame(() => {
+				container.classList.add(options.classes.active);
+				clearTimeout(scrollStopTimeout);
+				scrollStopTimeout = setTimeout(() => container.classList.remove(options.classes.active), options.hideDelay);
+				ticking = false;
+			});
+			ticking = true;
+		}
+	}
+}
+
+
+
 var Scrolling = new Class({
 
 	Implements: Options,
