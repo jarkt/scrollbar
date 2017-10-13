@@ -11,9 +11,122 @@
 	height: inherit;
 }
 
-/* = bars
+/* = track
 ----------------------------------------------------------------------------- */
-.scrolling .scrolling-bar {
+.scrolling-track {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+.scrolling:not(.scrolling-interactive) .scrolling-track {
+	pointer-events: none;
+}
+
+.scrolling-track.scrolling-track-y {
+	top: 0;
+}
+
+.scrolling-track.scrolling-track-x {
+	left: 0;
+}
+
+.scrolling-track::before {
+	content: '';
+	display: block;
+	background: rgba(0, 0, 0, 0);
+	transition: 150ms linear;
+}
+
+.scrolling-track.scrolling-track-y::before {
+	width: 25px;
+	height: 100%;
+	transform: translateX(100%);
+}
+
+.scrolling-track.scrolling-track-x::before {
+	height: 25px;
+	transform: translateY(100%);
+}
+
+.scrolling .scrolling-track:hover::before,
+.scrolling-interactive.scrolling-active .scrolling-track::before {
+	background: rgba(0, 0, 0, .1);
+	transform: translate(0);
+}
+
+/* offset x track if both are enabled, so they do not overlap */
+.scrolling-track.scrolling-track-xy.scrolling-track-x {
+	right: 25px;
+}
+
+.scrolling-track.scrolling-track-x::before {
+	margin-right: -25px;
+}
+
+.scrolling-interactive.scrolling-active .scrolling-track.scrolling-track-x::before {
+	margin-right: 0;
+}
+
+/* = bar
+----------------------------------------------------------------------------- */
+.scrolling-bar {
+	position: absolute;
+	display: flex;
+	align-items: flex-end;
+	padding: 5px;
+}
+
+.scrolling-track-x .scrolling-bar {
+	top: 0;
+	bottom: 0;
+	flex-direction: row;
+}
+
+.scrolling-track-y .scrolling-bar {
+	right: 0;
+	left: 0;
+	flex-direction: column;
+}
+
+.scrolling-bar::before {
+	flex: 1;
+	border-radius: 5px;
+	background: rgba(0, 0, 0, .25);
+	content: '';
+	transition: 150ms linear;
+}
+
+.scrolling-track-x .scrolling-bar::before {
+	height: 5px;
+}
+
+.scrolling-track-y .scrolling-bar::before {
+	width: 5px;
+}
+
+.scrolling-track:hover .scrolling-bar::before,
+.scrolling-interactive.scrolling-active .scrolling-bar::before {
+	width: 100%;
+	height: 100%;
+	background: #333;
+}
+
+/*
+################################################################################
+*/
+.scrllng {
+	position: relative;
+	overflow: hidden;
+}
+
+.scrllng-area {
+	overflow: auto;
+	width: inherit;
+	height: inherit;
+}
+
+.scrllng .scrllng-bar {
 	background: rgba(0, 0, 0, 0);
 	-webkit-transition: all 150ms linear;
 	-moz-transition: all 150ms linear;
@@ -22,42 +135,42 @@
 	transition: all 150ms linear;
 }
 
-.scrolling .scrolling-bar.scrolling-active,
-.scrolling .scrolling-bar:hover {
+.scrllng .scrllng-bar.scrllng-active,
+.scrllng .scrllng-bar:hover {
 	z-index: 1;
 	background: rgba(0, 0, 0, .1);
 }
 
-.scrolling .scrolling-bar > span {
+.scrllng .scrllng-bar > span {
 	display: block;
 	cursor: pointer;
 }
 
-.scrolling .scrolling-bar.scrolling-x > span {
+.scrllng .scrllng-bar.scrllng-x > span {
 	min-width: 50px;
 	height: 25px;
 }
 
-.scrolling .scrolling-bar.scrolling-y > span {
+.scrllng .scrllng-bar.scrllng-y > span {
 	min-height: 50px;
 	width: 25px;
 }
 
-.scrolling .scrolling-bar > span > span {
+.scrllng .scrllng-bar > span > span {
 	display: block;
 	height: inherit;
 }
 
-.scrolling .scrolling-bar.scrolling-x > span > span {
+.scrllng .scrllng-bar.scrllng-x > span > span {
 	width: inherit;
 }
 
-.scrolling .scrolling-bar.scrolling-y > span > span {
+.scrllng .scrllng-bar.scrllng-y > span > span {
 	margin-left: auto;
 	width: 15px;
 }
 
-.scrolling .scrolling-bar > span > span:before {
+.scrllng .scrllng-bar > span > span:before {
 	position: absolute;
 	display: block;
 	-webkit-border-radius: 5px;
@@ -72,41 +185,41 @@
 	transition: all 150ms ease-out;
 }
 
-.scrolling .scrolling-bar.scrolling-x > span > span:before {
+.scrllng .scrllng-bar.scrllng-x > span > span:before {
 	right: 5px;
 	bottom: 0;
 	left: 5px;
 	height: 5px;
 }
 
-.scrolling .scrolling-bar.scrolling-y > span > span:before {
+.scrllng .scrllng-bar.scrllng-y > span > span:before {
 	top: 5px;
 	right: 0;
 	bottom: 5px;
 	width: 5px;
 }
 
-.scrolling .scrolling-bar.scrolling-x:hover > span > span:before,
-.scrolling .scrolling-bar.scrolling-x.scrolling-active > span > span:before {
+.scrllng .scrllng-bar.scrllng-x:hover > span > span:before,
+.scrllng .scrllng-bar.scrllng-x.scrllng-active > span > span:before {
 	bottom: 5px;
 	height: 15px;
 }
 
-.scrolling .scrolling-bar.scrolling-y:hover > span > span:before,
-.scrolling .scrolling-bar.scrolling-y.scrolling-active > span > span:before {
+.scrllng .scrllng-bar.scrllng-y:hover > span > span:before,
+.scrllng .scrllng-bar.scrllng-y.scrllng-active > span > span:before {
 	right: 5px;
 	width: 15px;
 }
 
-.scrolling .scrolling-bar:hover > span > span:before {
+.scrllng .scrllng-bar:hover > span > span:before {
 	background: #333;
 }
 
-.scrolling .scrolling-bar.scrolling-active > span > span:before {
+.scrllng .scrllng-bar.scrllng-active > span > span:before {
 	background: #111;
 }
 
-.scrolling .scrolling-bar > span > span > .scrolling-label {
+.scrllng .scrllng-bar > span > span > .scrllng-label {
 	position: relative;
 	display: table-cell;
 	height: inherit;
@@ -123,23 +236,23 @@
 	transition: all 350ms ease-out;
 }
 
-.scrolling .scrolling-bar.scrolling-x > span > span > .scrolling-label {
+.scrllng .scrllng-bar.scrllng-x > span > span > .scrllng-label {
 	padding-top: 25px;
 	width: inherit;
 }
 
-.scrolling .scrolling-bar.scrolling-y > span > span > .scrolling-label {
+.scrllng .scrllng-bar.scrllng-y > span > span > .scrllng-label {
 	padding-left: 25px;
 }
 
-.scrolling .scrolling-bar.scrolling-active > span > span > .scrolling-label,
-.scrolling .scrolling-bar:hover > span > span > .scrolling-label {
+.scrllng .scrllng-bar.scrllng-active > span > span > .scrllng-label,
+.scrllng .scrllng-bar:hover > span > span > .scrllng-label {
 	padding: 0;
 	color: #bbb;
 	text-shadow: 0 0 10px #fff;
 }
 
-.scrolling .scrolling-bar > span > span > .scrolling-label strong {
+.scrllng .scrllng-bar > span > span > .scrllng-label strong {
 	font-weight: bold;
 	-webkit-transition: all 150ms ease-out;
 	-moz-transition: all 150ms ease-out;
@@ -148,21 +261,21 @@
 	transition: all 150ms ease-out;
 }
 
-.scrolling .scrolling-bar.scrolling-x > span > span > .scrolling-label > strong {
+.scrllng .scrllng-bar.scrllng-x > span > span > .scrllng-label > strong {
 	margin-right: 3px;
 	padding-right: 3px;
 	border-right: 1px solid transparent;
 }
 
-.scrolling .scrolling-bar.scrolling-y > span > span > .scrolling-label > strong {
+.scrllng .scrllng-bar.scrllng-y > span > span > .scrllng-label > strong {
 	display: block;
 	margin-bottom: 1px;
 	padding-bottom: 1px;
 	border-bottom: 1px solid transparent;
 }
 
-.scrolling .scrolling-bar.scrolling-active > span > span > .scrolling-label > strong,
-.scrolling .scrolling-bar:hover > span > span > .scrolling-label > strong {
+.scrllng .scrllng-bar.scrllng-active > span > span > .scrllng-label > strong,
+.scrllng .scrllng-bar:hover > span > span > .scrllng-label > strong {
 	border-color: #aaa;
 	color: #ddd;
 }

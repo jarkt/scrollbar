@@ -39,17 +39,22 @@
 		</style>
 	</head>
 	<body>
-		<div class="scrolling">
+		<div class="scrllng">
 			<div class="red-big-monster"></div>
 		</div>
-		<div id="vertical" class="scrolling">
+		<div id="vertical" class="scrllng">
 			<div class="non-scrolling"></div>
-			<div class="scrolling-area">
+			<div class="scrllng-area">
 				<div class="red-big-monster"></div>
 			</div>
 		</div>
 		<div class="native-scrollbars">
 			<div class="red-big-monster"></div>
+		</div>
+		<div data-scrolling="scrolling" data-scrolling-interactive>
+			<div data-scrolling-area>
+				<div class="red-big-monster"></div>
+			</div>
 		</div>
 		<div data-scrolling="scrolling">
 			<div data-scrolling-area>
@@ -83,11 +88,13 @@
 				var content = document.id('content-template').get('html');
 				document.getElements('.red-big-monster').set('html', content);
 
-				document.getElements('.scrolling').each(function(container) {
+				document.getElements('.scrllng').each(function(container) {
 					new Scrolling(container);
 				});
 
-				new ScrollingNew(document.querySelector('[data-scrolling]'));
+				for (const container of document.querySelectorAll('[data-scrolling]')) {
+					new ScrollingNew(container);
+				}
 			});
 		</script>
 	</body>

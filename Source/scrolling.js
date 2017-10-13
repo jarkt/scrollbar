@@ -49,8 +49,7 @@ provides: [Scrolling]
  */
 function ScrollingNew(container, options) {
 	options = Object.assign({
-		// interactive: true,
-		// label: '<strong>{currentPage}</strong>{pages}',
+		interactive: 'scrollingInteractive' in container.dataset,
 		classes: {
 			base: container.dataset.scrolling,
 			get area() {
@@ -58,15 +57,26 @@ function ScrollingNew(container, options) {
 			},
 			get active() {
 				return this.base + '-active';
+			},
+			get track() {
+				return this.base + '-track';
+			},
+			get bar() {
+				return this.base + '-bar';
+			},
+			get interactive() {
+				return this.base + '-interactive';
 			}
 		},
 		// scrollDuration: 260,
-		// scrollTransition: 'quad:out',
 		hideDelay: 500
 	}, options);
 
+	console.log(options.interactive)
+
 	const scrollingArea = container.querySelector('[data-scrolling-area]');
 	const nativeBarSize = {x: 0, y: 0};
+	const scrollbar = {};
 
 	let currentScrollPosition;
 	let ticking = false;
@@ -74,6 +84,7 @@ function ScrollingNew(container, options) {
 
 	// setup once
 	container.classList.add(options.classes.base);
+	if (options.interactive) container.classList.add(options.classes.interactive);
 	container.addEventListener('update', update);
 	scrollingArea.classList.add(options.classes.area);
 	scrollingArea.addEventListener('scroll', scroll);
@@ -81,20 +92,22 @@ function ScrollingNew(container, options) {
 	update();
 
 
-	// hover -> use css
-
-
 	/**
 	 * Update scrolling context (initial or on content or element size change)
 	 */
 	function update() {
 		hideNativeScrollbars();
+		setCustomScrollbars();
+		moveScrollbars();
 		/* TODO: on change update:
 			- scroll size (bar size)
 			- scroll direction (x, y, x+y)
 		*/
 	}
 
+	/**
+	 * Move the native scrollbars out of sight
+	 */
 	function hideNativeScrollbars() {
 		nativeBarSize.x = scrollingArea.offsetHeight - scrollingArea.clientHeight;
 		nativeBarSize.y = scrollingArea.offsetWidth - scrollingArea.clientWidth;
@@ -104,7 +117,57 @@ function ScrollingNew(container, options) {
 		});
 	}
 
-	function createScrollbars() {}
+	/**
+	 * Create, delete or update the custom scrollbar elements
+	 */
+	function setCustomScrollbars() {
+		const range = document.createRange();
+		for (const axis of Object.keys(nativeBarSize)) {
+			if (!(axis in scrollbar) && nativeBarSize[axis] > 0) {
+				scrollbar[axis] = {
+					bar: range.createContextualFragment(`<div class="${options.classes.bar}"></div>`).children[0],
+					track: range.createContextualFragment(`<div class="${options.classes.track} ${options.classes.track}-${axis}"></div>`).children[0]
+				};
+				scrollbar[axis].track.appendChild(scrollbar[axis].bar);
+				container.appendChild(scrollbar[axis].track);
+			} else if (nativeBarSize[axis] === 0) {
+				container.removeChild(scrollbar[axis].track);
+				delete scrollbar[axis];
+			}
+
+			if (nativeBarSize.x > 0 && nativeBarSize.y > 0) {
+				scrollbar[axis].track.classList.add(`${options.classes.track}-xy`);
+			} else if (axis in scrollbar) {
+				scrollbar[axis].track.classList.remove(`${options.classes.track}-xy`);
+			}
+
+			// TODO: Update bar size value, because of min size
+			if (axis === 'x') {
+				scrollbar[axis].size = Math.round(scrollingArea.clientWidth * (scrollingArea.clientWidth / scrollingArea.scrollWidth));
+				scrollbar[axis].bar.style.width = `${scrollbar[axis].size}px`;
+			} else {
+				scrollbar[axis].size = Math.round(scrollingArea.clientHeight * (scrollingArea.clientHeight / scrollingArea.scrollHeight));
+				scrollbar[axis].bar.style.height = `${scrollbar[axis].size}px`;
+			}
+		}
+	}
+
+	/**
+	 * Set offset for scrollbar elements
+	 */
+	function moveScrollbars() {
+		for (const axis of Object.keys(scrollbar)) {
+			if (axis === 'x') {
+				const maxBarOffset = scrollbar[axis].track.offsetWidth - scrollbar[axis].bar.offsetWidth;
+				const progress = scrollingArea.scrollLeft / (scrollingArea.scrollWidth - scrollingArea.clientWidth);
+				scrollbar[axis].bar.style.left = Math.round(maxBarOffset * progress) + 'px';
+			} else {
+				const maxBarOffset = scrollbar[axis].track.offsetHeight - scrollbar[axis].bar.offsetHeight;
+				const progress = scrollingArea.scrollTop / (scrollingArea.scrollHeight - scrollingArea.clientHeight );
+				scrollbar[axis].bar.style.top = Math.round(maxBarOffset * progress) + 'px';
+			}
+		}
+	}
 
 	/**
 	 * Update scroll position
@@ -117,6 +180,7 @@ function ScrollingNew(container, options) {
 		if (!ticking) {
 			requestAnimationFrame(() => {
 				container.classList.add(options.classes.active);
+				moveScrollbars();
 				clearTimeout(scrollStopTimeout);
 				scrollStopTimeout = setTimeout(() => container.classList.remove(options.classes.active), options.hideDelay);
 				ticking = false;
@@ -124,6 +188,8 @@ function ScrollingNew(container, options) {
 			ticking = true;
 		}
 	}
+
+	return {update};
 }
 
 
@@ -138,7 +204,7 @@ var Scrolling = new Class({
 		indicator: true,
 		interactive: true,
 		label: '<strong>{currentPage}</strong>{pages}',
-		className: 'scrolling',
+		className: 'scrllng',
 		biggerPages: false,
 		scrollDuration: 260,
 		scrollTransition: 'quad:out',
