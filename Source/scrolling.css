@@ -35,7 +35,7 @@
 	content: '';
 	display: block;
 	background: rgba(0, 0, 0, 0);
-	transition: 150ms linear;
+	transition: 150ms ease-in-out;
 }
 
 .scrolling-track.scrolling-track-y::before {
@@ -81,12 +81,14 @@
 	top: 0;
 	bottom: 0;
 	flex-direction: row;
+	min-width: 25px;
 }
 
 .scrolling-track-y .scrolling-bar {
 	right: 0;
 	left: 0;
 	flex-direction: column;
+	min-height: 25px;
 }
 
 .scrolling-bar::before {
@@ -94,7 +96,8 @@
 	border-radius: 5px;
 	background: rgba(0, 0, 0, .25);
 	content: '';
-	transition: 150ms linear;
+	transition: 150ms ease-in-out;
+	transform: translateZ(0);
 }
 
 .scrolling-track-x .scrolling-bar::before {
@@ -110,172 +113,4 @@
 	width: 100%;
 	height: 100%;
 	background: #333;
-}
-
-/*
-################################################################################
-*/
-.scrllng {
-	position: relative;
-	overflow: hidden;
-}
-
-.scrllng-area {
-	overflow: auto;
-	width: inherit;
-	height: inherit;
-}
-
-.scrllng .scrllng-bar {
-	background: rgba(0, 0, 0, 0);
-	-webkit-transition: all 150ms linear;
-	-moz-transition: all 150ms linear;
-	-ms-transition: all 150ms linear;
-	-o-transition: all 150ms linear;
-	transition: all 150ms linear;
-}
-
-.scrllng .scrllng-bar.scrllng-active,
-.scrllng .scrllng-bar:hover {
-	z-index: 1;
-	background: rgba(0, 0, 0, .1);
-}
-
-.scrllng .scrllng-bar > span {
-	display: block;
-	cursor: pointer;
-}
-
-.scrllng .scrllng-bar.scrllng-x > span {
-	min-width: 50px;
-	height: 25px;
-}
-
-.scrllng .scrllng-bar.scrllng-y > span {
-	min-height: 50px;
-	width: 25px;
-}
-
-.scrllng .scrllng-bar > span > span {
-	display: block;
-	height: inherit;
-}
-
-.scrllng .scrllng-bar.scrllng-x > span > span {
-	width: inherit;
-}
-
-.scrllng .scrllng-bar.scrllng-y > span > span {
-	margin-left: auto;
-	width: 15px;
-}
-
-.scrllng .scrllng-bar > span > span:before {
-	position: absolute;
-	display: block;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	background: rgba(0, 0, 0, .25);
-	content: '';
-	-webkit-transition: all 150ms ease-out;
-	-moz-transition: all 150ms ease-out;
-	-ms-transition: all 150ms ease-out;
-	-o-transition: all 150ms ease-out;
-	transition: all 150ms ease-out;
-}
-
-.scrllng .scrllng-bar.scrllng-x > span > span:before {
-	right: 5px;
-	bottom: 0;
-	left: 5px;
-	height: 5px;
-}
-
-.scrllng .scrllng-bar.scrllng-y > span > span:before {
-	top: 5px;
-	right: 0;
-	bottom: 5px;
-	width: 5px;
-}
-
-.scrllng .scrllng-bar.scrllng-x:hover > span > span:before,
-.scrllng .scrllng-bar.scrllng-x.scrllng-active > span > span:before {
-	bottom: 5px;
-	height: 15px;
-}
-
-.scrllng .scrllng-bar.scrllng-y:hover > span > span:before,
-.scrllng .scrllng-bar.scrllng-y.scrllng-active > span > span:before {
-	right: 5px;
-	width: 15px;
-}
-
-.scrllng .scrllng-bar:hover > span > span:before {
-	background: #333;
-}
-
-.scrllng .scrllng-bar.scrllng-active > span > span:before {
-	background: #111;
-}
-
-.scrllng .scrllng-bar > span > span > .scrllng-label {
-	position: relative;
-	display: table-cell;
-	height: inherit;
-	color: transparent;
-	vertical-align: middle;
-	text-align: center;
-	font-weight: lighter;
-	font-size: .7em;
-	font-family: arial, sans-serif;
-	-webkit-transition: all 350ms ease-out;
-	-moz-transition: all 350ms ease-out;
-	-ms-transition: all 350ms ease-out;
-	-o-transition: all 350ms ease-out;
-	transition: all 350ms ease-out;
-}
-
-.scrllng .scrllng-bar.scrllng-x > span > span > .scrllng-label {
-	padding-top: 25px;
-	width: inherit;
-}
-
-.scrllng .scrllng-bar.scrllng-y > span > span > .scrllng-label {
-	padding-left: 25px;
-}
-
-.scrllng .scrllng-bar.scrllng-active > span > span > .scrllng-label,
-.scrllng .scrllng-bar:hover > span > span > .scrllng-label {
-	padding: 0;
-	color: #bbb;
-	text-shadow: 0 0 10px #fff;
-}
-
-.scrllng .scrllng-bar > span > span > .scrllng-label strong {
-	font-weight: bold;
-	-webkit-transition: all 150ms ease-out;
-	-moz-transition: all 150ms ease-out;
-	-ms-transition: all 150ms ease-out;
-	-o-transition: all 150ms ease-out;
-	transition: all 150ms ease-out;
-}
-
-.scrllng .scrllng-bar.scrllng-x > span > span > .scrllng-label > strong {
-	margin-right: 3px;
-	padding-right: 3px;
-	border-right: 1px solid transparent;
-}
-
-.scrllng .scrllng-bar.scrllng-y > span > span > .scrllng-label > strong {
-	display: block;
-	margin-bottom: 1px;
-	padding-bottom: 1px;
-	border-bottom: 1px solid transparent;
-}
-
-.scrllng .scrllng-bar.scrllng-active > span > span > .scrllng-label > strong,
-.scrllng .scrllng-bar:hover > span > span > .scrllng-label > strong {
-	border-color: #aaa;
-	color: #ddd;
 }
