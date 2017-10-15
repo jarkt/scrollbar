@@ -57,8 +57,8 @@ function Scrolling(container, options) {
 	const scrollbar = {};
 
 	let currentScrollPosition;
-	let ticking = false;
-	let scrollStopTimeout;
+	let scrollTicking = false;
+	let scrollTimeout;
 
 	// setup once
 	container.classList.add(options.classes.base);
@@ -102,7 +102,10 @@ function Scrolling(container, options) {
 					bar: range.createContextualFragment(`<div class="${options.classes.bar}"></div>`).children[0],
 					track: range.createContextualFragment(`<div class="${options.classes.track} ${options.classes.track}-${axis}"></div>`).children[0]
 				};
-				if (options.interactive) addMoveEvent(scrollbar[axis], axis);
+				if (options.interactive) {
+					addBarMoveEvent(scrollbar[axis], axis);
+					addTrackClickEvent(scrollbar[axis], axis);
+				}
 				scrollbar[axis].track.appendChild(scrollbar[axis].bar);
 				container.appendChild(scrollbar[axis].track);
 			} else if (nativeBarSize[axis] === 0 && scrollbar[axis]) {
@@ -125,9 +128,10 @@ function Scrolling(container, options) {
 				scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetWidth - scrollbar[axis].bar.offsetWidth;
 				scrollbar[axis].maxScrollOffset = scrollingArea.scrollWidth - scrollingArea.clientWidth;
 				scrollbar[axis].prop = {
-					client: 'clientX',
 					offset: 'offsetLeft',
 					scroll: 'scrollLeft',
+					client: 'clientX',
+					layer: 'layerX',
 					style: 'left'
 				};
 			} else {
@@ -136,9 +140,10 @@ function Scrolling(container, options) {
 				scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetHeight - scrollbar[axis].bar.offsetHeight;
 				scrollbar[axis].maxScrollOffset = scrollingArea.scrollHeight - scrollingArea.clientHeight;
 				scrollbar[axis].prop = {
-					client: 'clientY',
 					offset: 'offsetTop',
 					scroll: 'scrollTop',
+					client: 'clientY',
+					layer: 'layerY',
 					style: 'top'
 				};
 			}
@@ -164,15 +169,15 @@ function Scrolling(container, options) {
 			x: scrollingArea.scrollLeft,
 			y: scrollingArea.scrollTop
 		};
-		if (!ticking) {
+		if (!scrollTicking) {
 			requestAnimationFrame(() => {
 				container.classList.add(options.classes.active);
 				moveScrollbars();
-				clearTimeout(scrollStopTimeout);
-				scrollStopTimeout = setTimeout(() => container.classList.remove(options.classes.active), options.hideDelay);
-				ticking = false;
+				clearTimeout(scrollTimeout);
+				scrollTimeout = setTimeout(() => container.classList.remove(options.classes.active), options.hideDelay);
+				scrollTicking = false;
 			});
-			ticking = true;
+			scrollTicking = true;
 		}
 	}
 
@@ -182,13 +187,20 @@ function Scrolling(container, options) {
 	 * @param {Object} scrollbar
 	 * @param {String} axis
 	 */
-	function addMoveEvent(scrollbar, axis) {
+	function addBarMoveEvent(scrollbar, axis) {
 		scrollbar.bar.addEventListener('mousedown', e => {
 			const startOffset = e[scrollbar.prop.client] - scrollbar.bar[scrollbar.prop.offset];
+			let moveTicking = false;
 			const moveBar = e => {
-				let offset = e[scrollbar.prop.client] - startOffset;
-				offset = offset < 0 ? 0 : offset > scrollbar.maxBarOffset ? scrollbar.maxBarOffset : offset;
-				scrollingArea[scrollbar.prop.scroll] = offset / scrollbar.maxBarOffset * scrollbar.maxScrollOffset;
+				if (!moveTicking) {
+					requestAnimationFrame(() => {
+						let offset = e[scrollbar.prop.client] - startOffset;
+						offset = offset < 0 ? 0 : offset > scrollbar.maxBarOffset ? scrollbar.maxBarOffset : offset;
+						scrollingArea[scrollbar.prop.scroll] = offset / scrollbar.maxBarOffset * scrollbar.maxScrollOffset;
+						moveTicking = false;
+					});
+					moveTicking = true;
+				}
 			}
 			const removeWindowEventListener = () => {
 				window.removeEventListener('mousemove', moveBar);
@@ -196,6 +208,20 @@ function Scrolling(container, options) {
 			}
 			window.addEventListener('mousemove', moveBar)
 			window.addEventListener('mouseup', removeWindowEventListener);
+		});
+	}
+
+	/**
+	 * Make custom track clickable to page up or down
+	 *
+	 * @param {Object} scrollbar
+	 * @param {String} axis
+	 */
+	function addTrackClickEvent(scrollbar, axis) {
+		scrollbar.track.addEventListener('click', e => {
+			// ignore clicks on the bar, the move handler is responsible for them
+			if (e.target !== scrollbar.track) return;
+			scrollingArea[scrollbar.prop.scroll] = (e[scrollbar.prop.layer] - scrollbar.size / 2) / scrollbar.maxBarOffset * scrollbar.maxScrollOffset;
 		});
 	}
 
