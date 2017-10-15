@@ -1,16 +1,16 @@
 /**
- * Scrolling class adds custom scrollbars to a native scrolling element.
+ * Scrolling adds custom scrollbars to a native scrolling element.
  *
- * Example HTML:
- * <div data-scrolling="scrolling" data-scrolling-interactive>
+ * Example (pseudo) HTML:
+ * <div data-scrolling(="scrolling") data-scrolling-interactive>
  *     <div data-scrolling-area>
  *         scrollable content goes here
  *     </div>
  * </div>
  *
  * Example JS initialization:
- * for (const scrolling of document.querySelectorAll('[data-scrolling]')) {
- *     new Scrolling(scrolling);
+ * for (const container of document.querySelectorAll('[data-scrolling]')) {
+ *     new Scrolling(container);
  * }
  *
  * Example CSS:
@@ -29,9 +29,20 @@
  */
 function Scrolling(container, options) {
 	options = Object.assign({
+		/**
+		 * Show (large) click- and dragable scrollbars
+		 *
+		 * @type {Bool}
+		 */
 		interactive: 'scrollingInteractive' in container.dataset,
+		/**
+		 * CSS classes for styling, if you change this, default CSS will no
+		 * longer work and you have to provide your own.
+		 *
+		 * @type {Object}
+		 */
 		classes: {
-			base: container.dataset.scrolling,
+			base: container.dataset.scrolling || 'scrolling',
 			get area() {
 				return `${this.base}-area`;
 			},
@@ -48,7 +59,11 @@ function Scrolling(container, options) {
 				return `${this.base}-interactive`;
 			}
 		},
-		// scrollDuration: 260,
+		/**
+		 * Delay to hide scrollbar after scrolling stops
+		 *
+		 * @type {Number}
+		 */
 		hideDelay: 500
 	}, options);
 
@@ -227,3 +242,5 @@ function Scrolling(container, options) {
 
 	return {update};
 }
+
+export default Scrolling;

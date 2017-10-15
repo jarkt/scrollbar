@@ -9,101 +9,29 @@ Adds custom scrollbars to *native* scrolling area.
 How to use
 ----------
 
-You need a container element for scrolling:
+You need a container and scroll area element for scrolling:
 
-	<div class="scrolling">
-		<p>Scroll content</p>
-	</div>
-
-If you do not use the scrolling class, it will be applied to the container. Elements inside the container will be moved to the scrolling area which is placed inside the container beside the scrollbar elements.
-
-You may provide the scrolling area element and it will be grabbed instead of creating a new one:
-
-	<div class="scrolling">
-		<div class="scrolling-area">
-			<p>Scroll content</p>
+	<div data-scrolling data-scrolling-interactive>
+		<div data-scrolling-area>
+			scrollable content goes here
 		</div>
 	</div>
 
-This is useful if you want to provide elements within the container which should not scroll but be positioned absolutely.
+You can set data-scrolling to a custom class name which will be used as
+base/prefix for all classes.
 
+You have to create an instance for every scrolling element:
 
-If you are happy with the defaults, just grab the container element:
+	new Scrolling(document.querySelector('[data-scrolling]'));
 
-	var scrolling = new Scrolling(document.getElements('.scrolling')[0]);
+	// or for multiple elements
 
-Otherwise you may adjust any of these options to your needs:
+	for (const container of document.querySelectorAll('[data-scrolling]')) {
+		new Scrolling(container);
+	}
 
-	var scrolling = new Scrolling(document.getElements('.scrolling')[0], {
-		/**
-		 * Overrides overflow-x style, currently only 'hidden' is supported
-		 *
-		 * @type {string}
-		 */
-		horizontal: null,
+DOM has to be ready for initialization, because the size of the elements is
+required to be known.
 
-		/**
-		 * Overrides overflow-y style, currently only 'hidden' is supported
-		 *
-		 * @type {string}
-		 */
-		vertical: null,
-
-		/**
-		 * Show small scrollbars
-		 *
-		 * 'scroll', 'hover', true (always) or false (never)
-		 *
-		 * @type {bool|string}
-		 */
-		indicator: true,
-
-		/**
-		 * Show large click- and dragable scrollbars
-		 *
-		 * 'scroll', 'hover', true (for both) or false (never)
-		 *
-		 * @type {bool|string}
-		 */
-		interactive: true,
-
-		/**
-		 * Label to show scroll position
-		 *
-		 * Placeholders: {currentPage} and {pages}
-		 * null = disabled
-		 *
-		 * @type {string}
-		 */
-		label: '<strong>{currentPage}</strong>{pages}',
-
-		/**
-		 * Prefix for CSS classes and class name for container
-		 *
-		 * If you change this, default CSS will no longer work, you have to provide your own.
-		 *
-		 * @type {string}
-		 */
-		className: 'scrolling',
-
-		/**
-		 * Scroll duration if scrollbar is moved
-		 *
-		 * @type {number}
-		 */
-		scrollDuration: 260,
-
-		/**
-		 * Transition for scrollbar movement
-		 *
-		 * @type {string}
-		 */
-		scrollTransition: 'quad:out',
-
-		/**
-		 * Delay to hide scrollbar after scrolling stops
-		 *
-		 * @type {number}
-		 */
-		hideDelay: 500
-	});
+If scroll content changes, trigger the update event on the container element,
+or if you are holding a reference to the instance, call the update method on it.
