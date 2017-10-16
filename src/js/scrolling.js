@@ -246,6 +246,37 @@ function Scrolling(container, options) {
 			if (e.target !== scrollbar.track) return;
 			scrollingArea[scrollbar.prop.scroll] = (e[scrollbar.prop.layer] - scrollbar.size / 2) / scrollbar.maxBarOffset * scrollbar.maxScrollOffset;
 		});
+
+		// handle mousewheel event on scrollbar
+		/*scrollbar.track.addEventListener('wheel', e => {
+			// even if size in pixels is correct, the scrolling physics will differ (smoothscrolling or not)
+			const prop = axis === 'x' ? 'deltaX' : 'deltaY';
+			let pixel;
+			switch (e.deltaMode) {
+				case 0x01: // DOM_DELTA_LINE
+					pixel = e[prop]; // figure out line height in pixels
+					break;
+				case 0x02: // DOM_DELTA_PAGE
+					pixel = e[prop] * scrollingArea[scrollbar.prop.client];
+					break;
+				default: // DOM_DELTA_PIXEL
+					pixel = e[prop];
+			}
+			scrollingArea[scrollbar.prop.scroll] += pixel;
+			// event will be untrusted and not trigger scrolling
+			const wheelEvent = new WheelEvent('wheel', {
+				deltaX: e.deltaX,
+				deltaY: e.deltaY,
+				deltaZ: e.deltaZ,
+				deltaMode: e.deltaMode
+			});
+			scrollingArea.dispatchEvent(wheelEvent);
+		});*/
+		// TODO: always set "pointer-events: none" and grab the events from scrollingArea???
+		/* TODO: pass click events to hidden scrollbar in order to achieve native paging behaviour???
+			this will break if scrollbar has arrow buttons!
+			do paging on our own? will not be native and always page although default behaviour sometimes differs
+		*/
 	}
 
 	return {update};
