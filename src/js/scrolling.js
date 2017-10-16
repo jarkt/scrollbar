@@ -70,6 +70,11 @@ function Scrolling(container, options) {
 	const scrollingArea = container.querySelector('[data-scrolling-area]');
 	const nativeBarSize = {x: 0, y: 0};
 	const scrollbar = {};
+	const range = document.createRange();
+	const fragment = string => {
+		const html = range.createContextualFragment(string);
+		return html.children.length === 1 ? html.children[0] : html;
+	};
 
 	let currentScrollPosition;
 	let scrollTicking = false;
@@ -110,12 +115,11 @@ function Scrolling(container, options) {
 	 * Create, delete or update the custom scrollbar elements
 	 */
 	function setCustomScrollbars() {
-		const range = document.createRange();
 		for (const axis of Object.keys(nativeBarSize)) {
 			if (!(axis in scrollbar) && nativeBarSize[axis] > 0) {
 				scrollbar[axis] = {
-					bar: range.createContextualFragment(`<div class="${options.classes.bar}"></div>`).children[0],
-					track: range.createContextualFragment(`<div class="${options.classes.track} ${options.classes.track}-${axis}"></div>`).children[0]
+					bar: fragment(`<div class="${options.classes.bar}"></div>`),
+					track: fragment(`<div class="${options.classes.track} ${options.classes.track}-${axis}"></div>`)
 				};
 				if (options.interactive) {
 					addBarMoveEvent(scrollbar[axis], axis);
