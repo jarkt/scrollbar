@@ -208,6 +208,8 @@ function Scrolling(container, options) {
 	 */
 	function addBarMoveEvent(scrollbar, axis) {
 		scrollbar.bar.addEventListener('mousedown', e => {
+			// prevent text selection
+			e.preventDefault();
 			const startOffset = e[scrollbar.prop.client] - scrollbar.bar[scrollbar.prop.offset];
 			let moveTicking = false;
 			const moveBar = e => {
