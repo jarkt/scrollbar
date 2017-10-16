@@ -127,44 +127,46 @@ function Scrolling(container, options) {
 				}
 				scrollbar[axis].track.appendChild(scrollbar[axis].bar);
 				container.appendChild(scrollbar[axis].track);
-			} else if (nativeBarSize[axis] === 0 && scrollbar[axis]) {
+			} else if (nativeBarSize[axis] === 0 && axis in scrollbar) {
 				container.removeChild(scrollbar[axis].track);
 				delete scrollbar[axis];
 				continue;
 			}
 
-			// additional class if both scrollbars are active
-			if (nativeBarSize.x > 0 && nativeBarSize.y > 0) {
-				scrollbar[axis].track.classList.add(`${options.classes.track}-xy`);
-			} else if (axis in scrollbar) {
-				scrollbar[axis].track.classList.remove(`${options.classes.track}-xy`);
-			}
+			if (axis in scrollbar) {
+				// additional class if both scrollbars are active
+				if (nativeBarSize.x > 0 && nativeBarSize.y > 0) {
+					scrollbar[axis].track.classList.add(`${options.classes.track}-xy`);
+				} else if (axis in scrollbar) {
+					scrollbar[axis].track.classList.remove(`${options.classes.track}-xy`);
+				}
 
-			// set bar size and everything for later scrollbar calculation
-			if (axis === 'x') {
-				scrollbar[axis].size = Math.round(scrollingArea.clientWidth * (scrollingArea.clientWidth / scrollingArea.scrollWidth));
-				scrollbar[axis].bar.style.width = `${scrollbar[axis].size}px`;
-				scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetWidth - scrollbar[axis].bar.offsetWidth;
-				scrollbar[axis].maxScrollOffset = scrollingArea.scrollWidth - scrollingArea.clientWidth;
-				scrollbar[axis].prop = {
-					offset: 'offsetLeft',
-					scroll: 'scrollLeft',
-					client: 'clientX',
-					layer: 'layerX',
-					style: 'left'
-				};
-			} else {
-				scrollbar[axis].size = Math.round(scrollingArea.clientHeight * (scrollingArea.clientHeight / scrollingArea.scrollHeight));
-				scrollbar[axis].bar.style.height = `${scrollbar[axis].size}px`;
-				scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetHeight - scrollbar[axis].bar.offsetHeight;
-				scrollbar[axis].maxScrollOffset = scrollingArea.scrollHeight - scrollingArea.clientHeight;
-				scrollbar[axis].prop = {
-					offset: 'offsetTop',
-					scroll: 'scrollTop',
-					client: 'clientY',
-					layer: 'layerY',
-					style: 'top'
-				};
+				// set bar size and everything for later scrollbar calculation
+				if (axis === 'x') {
+					scrollbar[axis].size = Math.round(scrollingArea.clientWidth * (scrollingArea.clientWidth / scrollingArea.scrollWidth));
+					scrollbar[axis].bar.style.width = `${scrollbar[axis].size}px`;
+					scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetWidth - scrollbar[axis].bar.offsetWidth;
+					scrollbar[axis].maxScrollOffset = scrollingArea.scrollWidth - scrollingArea.clientWidth;
+					scrollbar[axis].prop = {
+						offset: 'offsetLeft',
+						scroll: 'scrollLeft',
+						client: 'clientX',
+						layer: 'layerX',
+						style: 'left'
+					};
+				} else {
+					scrollbar[axis].size = Math.round(scrollingArea.clientHeight * (scrollingArea.clientHeight / scrollingArea.scrollHeight));
+					scrollbar[axis].bar.style.height = `${scrollbar[axis].size}px`;
+					scrollbar[axis].maxBarOffset = scrollbar[axis].track.offsetHeight - scrollbar[axis].bar.offsetHeight;
+					scrollbar[axis].maxScrollOffset = scrollingArea.scrollHeight - scrollingArea.clientHeight;
+					scrollbar[axis].prop = {
+						offset: 'offsetTop',
+						scroll: 'scrollTop',
+						client: 'clientY',
+						layer: 'layerY',
+						style: 'top'
+					};
+				}
 			}
 		}
 	}
