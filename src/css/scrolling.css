@@ -1,0 +1,116 @@
+/* = basic scrolling container
+----------------------------------------------------------------------------- */
+.scrolling {
+	position: relative;
+	overflow: hidden;
+}
+
+.scrolling-area {
+	overflow: auto;
+	width: inherit;
+	height: inherit;
+}
+
+/* = track
+----------------------------------------------------------------------------- */
+.scrolling-track {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+.scrolling:not(.scrolling-interactive) .scrolling-track {
+	pointer-events: none;
+}
+
+.scrolling-track.scrolling-track-y {
+	top: 0;
+}
+
+.scrolling-track.scrolling-track-x {
+	left: 0;
+}
+
+.scrolling-track::before {
+	content: '';
+	display: block;
+	background: rgba(0, 0, 0, 0);
+	transition: 150ms ease-in-out;
+}
+
+.scrolling-track.scrolling-track-y::before {
+	width: 25px;
+	height: 100%;
+	transform: translateX(100%);
+}
+
+.scrolling-track.scrolling-track-x::before {
+	height: 25px;
+	transform: translateY(100%);
+}
+
+.scrolling .scrolling-track:hover::before,
+.scrolling-interactive.scrolling-active .scrolling-track::before {
+	background: rgba(0, 0, 0, .1);
+	transform: translate(0);
+}
+
+/* offset x track if both are enabled, so they do not overlap */
+.scrolling-track.scrolling-track-xy.scrolling-track-x {
+	right: 25px;
+}
+
+.scrolling-track.scrolling-track-x::before {
+	margin-right: -25px;
+}
+
+.scrolling-interactive.scrolling-active .scrolling-track.scrolling-track-x::before {
+	margin-right: 0;
+}
+
+/* = bar
+----------------------------------------------------------------------------- */
+.scrolling-bar {
+	position: absolute;
+	display: flex;
+	align-items: flex-end;
+	padding: 5px;
+}
+
+.scrolling-track-x .scrolling-bar {
+	top: 0;
+	bottom: 0;
+	flex-direction: row;
+	min-width: 25px;
+}
+
+.scrolling-track-y .scrolling-bar {
+	right: 0;
+	left: 0;
+	flex-direction: column;
+	min-height: 25px;
+}
+
+.scrolling-bar::before {
+	flex: 1;
+	border-radius: 5px;
+	background: rgba(0, 0, 0, .25);
+	content: '';
+	transition: 150ms ease-in-out;
+	transform: translateZ(0);
+}
+
+.scrolling-track-x .scrolling-bar::before {
+	height: 5px;
+}
+
+.scrolling-track-y .scrolling-bar::before {
+	width: 5px;
+}
+
+.scrolling-track:hover .scrolling-bar::before,
+.scrolling-interactive.scrolling-active .scrolling-bar::before {
+	width: 100%;
+	height: 100%;
+	background: #333;
+}
